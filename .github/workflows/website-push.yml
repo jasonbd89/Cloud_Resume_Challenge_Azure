@@ -5,7 +5,9 @@ on:
     branches: [ main ]
     paths:
       - 'frontend/**' # ONLY trigger if files in the frontend folder change
-      
+  
+  workflow_dispatch: 
+
 permissions:
   id-token: write
   contents: read
