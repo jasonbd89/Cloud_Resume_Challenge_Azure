@@ -1,4 +1,4 @@
-resource "azurerm_resource_group" "example" {
-  name     = "rg-my-first-managed-infra"
+resource "azurerm_resource_group" "resume-challenge" {
+  name     = "rg-resume-challenge"
   location = "polandcentral"
 }
