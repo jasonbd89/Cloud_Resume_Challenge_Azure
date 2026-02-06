@@ -5,15 +5,23 @@ from azure.cosmos import CosmosClient, exceptions
 
 app = func.FunctionApp()
 
-# Initialize Cosmos Client outside the function for connection pooling
-COSMOS_ENDPOINT = os.environ.get('COSMOS_ENDPOINT')
-COSMOS_KEY = os.environ.get('COSMOS_KEY')
-DATABASE_NAME = "resume-challenge-db"
-CONTAINER_NAME = "visitor-counter"
+# Lazy initialization to prevent startup crashes
+container = None
 
-client = CosmosClient(COSMOS_ENDPOINT, COSMOS_KEY)
-database = client.get_database_client(DATABASE_NAME)
-container = database.get_container_client(CONTAINER_NAME)
+def get_container():
+    global container
+    if container:
+        return container
+        
+    COSMOS_ENDPOINT = os.environ.get('COSMOS_ENDPOINT')
+    COSMOS_KEY = os.environ.get('COSMOS_KEY')
+    DATABASE_NAME = "resume-challenge-db"
+    CONTAINER_NAME = "visitor-counter"
+    
+    client = CosmosClient(COSMOS_ENDPOINT, COSMOS_KEY)
+    database = client.get_database_client(DATABASE_NAME)
+    container = database.get_container_client(CONTAINER_NAME)
+    return container
 
 @app.route(route="visitors", auth_level=func.AuthLevel.ANONYMOUS)
 def visitor_counter(req: func.HttpRequest) -> func.HttpResponse:
@@ -26,7 +34,7 @@ def visitor_counter(req: func.HttpRequest) -> func.HttpResponse:
             {'op': 'incr', 'path': '/views', 'value': 1}
         ]
 
-        updated_item = container.patch_item(
+        updated_item = get_container().patch_item(
             item=item_id,
             partition_key=partition_key,
             patch_operations=operations
