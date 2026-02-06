@@ -49,6 +49,15 @@ def visitor_counter(req: func.HttpRequest) -> func.HttpResponse:
         )
 
     except exceptions.CosmosResourceNotFoundError:
-        return func.HttpResponse("Record not initialized", status_code=404)
+        # If the item doesn't exist, create it
+        get_container().create_item({
+            'id': item_id,
+            'views': 1
+        })
+        return func.HttpResponse(
+            json.dumps({'count': 1}),
+            status_code=200,
+            mimetype="application/json"
+        )
     except Exception as e:
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)
