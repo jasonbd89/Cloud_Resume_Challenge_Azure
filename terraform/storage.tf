@@ -32,3 +32,11 @@ resource "azurerm_role_assignment" "resume_data_contributor" {
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = data.azuread_service_principal.github_id.object_id
 }
+
+resource "azurerm_storage_account" "func_storage" {
+  name                     = "stfuncresume022025"
+  resource_group_name      = azurerm_resource_group.resume-challenge.name
+  location                 = azurerm_resource_group.resume-challenge.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
