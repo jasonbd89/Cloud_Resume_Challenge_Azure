@@ -2,6 +2,7 @@ import json
 import os
 import azure.functions as func
 from azure.cosmos import CosmosClient, exceptions
+from azure.identity import DefaultAzureCredential
 
 app = func.FunctionApp()
 
@@ -14,11 +15,11 @@ def get_container():
         return container
         
     COSMOS_ENDPOINT = os.environ.get('COSMOS_ENDPOINT')
-    COSMOS_KEY = os.environ.get('COSMOS_KEY')
     DATABASE_NAME = "resume-challenge-db"
     CONTAINER_NAME = "visitor-counter"
     
-    client = CosmosClient(COSMOS_ENDPOINT, COSMOS_KEY)
+    credential = DefaultAzureCredential()
+    client = CosmosClient(COSMOS_ENDPOINT, credential=credential)
     database = client.get_database_client(DATABASE_NAME)
     container = database.get_container_client(CONTAINER_NAME)
     return container
