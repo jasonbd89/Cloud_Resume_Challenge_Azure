@@ -37,10 +37,10 @@ resource "azurerm_linux_function_app" "visitor_counter" {
   }
 }
 
-resource "azurerm_cosmosdb_sql_role_assignment" "func_to_cosmos" {
-  resource_group_name = azurerm_resource_group.resume-challenge.name
-  account_name        = azurerm_cosmosdb_account.resume-challenge-ac.name
-  role_definition_id  = "${azurerm_cosmosdb_account.resume-challenge-ac.id}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002"
-  principal_id        = azurerm_linux_function_app.visitor_counter.identity[0].principal_id
-  scope               = azurerm_cosmosdb_account.resume-challenge-ac.id
-}
+# resource "azurerm_cosmosdb_sql_role_assignment" "func_to_cosmos" {
+#   resource_group_name = azurerm_resource_group.resume-challenge.name
+#   account_name        = azurerm_cosmosdb_account.resume-challenge-ac.name
+#   role_definition_id  = "${azurerm_cosmosdb_account.resume-challenge-ac.id}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002"
+#   principal_id        = azurerm_linux_function_app.visitor_counter.identity[0].principal_id
+#   scope               = azurerm_cosmosdb_account.resume-challenge-ac.id
+# }
