@@ -31,7 +31,7 @@ resource "azurerm_linux_function_app" "visitor_counter" {
   app_settings = {
     "COSMOS_ENDPOINT"              = azurerm_cosmosdb_account.resume-challenge-ac.endpoint
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
-    "ENABLE_ORYX_BUILD"            = "true"
+    "ENABLE_ORYX_BUILD"            = "false"
     "FUNCTIONS_WORKER_RUNTIME"     = "python"
     "AzureWebJobsFeatureFlags"     = "EnableWorkerIndexing"
     "WEBSITE_RUN_FROM_PACKAGE" = "https://placeholder.zip"
