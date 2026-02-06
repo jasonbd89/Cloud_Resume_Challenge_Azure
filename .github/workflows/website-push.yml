@@ -33,4 +33,5 @@ jobs:
               --account-name stresumechallenge022025 \
               --auth-mode login \
               -d '$web' \
-              -s ./frontend
+              -s ./frontend \
+              --overwrite
