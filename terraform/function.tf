@@ -1,7 +1,7 @@
 resource "azurerm_service_plan" "func_plan" {
   name                = "sp-resume-challenge"
   resource_group_name = azurerm_resource_group.resume-challenge.name
-  location            = azurerm_resource_group.resume-challenge.location
+  location            = "westeurope"
   os_type             = "Linux"
   sku_name            = "Y1"
 }
@@ -9,7 +9,7 @@ resource "azurerm_service_plan" "func_plan" {
 resource "azurerm_linux_function_app" "visitor_counter" {
   name                = "func-visitor-counter-resume-022025"
   resource_group_name = azurerm_resource_group.resume-challenge.name
-  location            = azurerm_resource_group.resume-challenge.location
+  location            = "westeurope"
 
   storage_account_name       = azurerm_storage_account.func_storage.name
   storage_account_access_key = azurerm_storage_account.func_storage.primary_access_key

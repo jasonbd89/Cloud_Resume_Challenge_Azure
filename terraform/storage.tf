@@ -36,7 +36,7 @@ resource "azurerm_role_assignment" "resume_data_contributor" {
 resource "azurerm_storage_account" "func_storage" {
   name                     = "stfuncresume022025"
   resource_group_name      = azurerm_resource_group.resume-challenge.name
-  location                 = azurerm_resource_group.resume-challenge.location
+  location                 = "westeurope"
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
