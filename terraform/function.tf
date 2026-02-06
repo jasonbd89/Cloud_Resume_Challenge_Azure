@@ -34,7 +34,8 @@ resource "azurerm_linux_function_app" "visitor_counter" {
     "ENABLE_ORYX_BUILD"            = "true"
     "FUNCTIONS_WORKER_RUNTIME"     = "python"
     "AzureWebJobsFeatureFlags"     = "EnableWorkerIndexing"
-    "WEBSITE_RUN_FROM_PACKAGE" = "1"
+    "WEBSITE_RUN_FROM_PACKAGE" = "https://placeholder.zip"
+
   }
 
   lifecycle {
