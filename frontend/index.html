@@ -368,12 +368,12 @@
 </div>
 
 <script>
-    const LAMBDA_URL = 'https://ilpg347h33nqdx2vvyxno372va0wgsin.lambda-url.eu-central-1.on.aws/';
+    const AzureAPI = 'https://func-visitor-counter-resume-022025.azurewebsites.net/api/visitors';
 
     async function updateVisitorCounter() {
         const counterElement = document.getElementById('counter-value');
         try {
-            const response = await fetch(LAMBDA_URL, { method: 'POST' });
+            const response = await fetch(AzureAPI, { method: 'POST' });
             if (!response.ok) throw new Error('Network error');
             const data = await response.json();
             counterElement.innerText = data.count;
