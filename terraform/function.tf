@@ -35,6 +35,13 @@ resource "azurerm_linux_function_app" "visitor_counter" {
     "FUNCTIONS_WORKER_RUNTIME"     = "python"
     "AzureWebJobsFeatureFlags"     = "EnableWorkerIndexing"
   }
+
+  lifecycle {
+    ignore_changes = [
+      app_settings["WEBSITE_RUN_FROM_PACKAGE"],
+      app_settings["WEBSITE_ENABLE_SYNC_UPDATE_SITE"]
+    ]
+  }
 }
 
 resource "azurerm_cosmosdb_sql_role_assignment" "func_to_cosmos" {
