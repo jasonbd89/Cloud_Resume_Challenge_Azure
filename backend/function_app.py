@@ -45,10 +45,7 @@ def visitor_counter(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(
             json.dumps({'count': int(new_count)}),
             status_code=200,
-            mimetype="application/json",
-            headers={
-                'Access-Control-Allow-Origin': '*'
-            }
+            mimetype="application/json"
         )
 
     except exceptions.CosmosResourceNotFoundError:
