@@ -30,7 +30,7 @@ jobs:
         with:
           inlineScript: |
             az storage blob upload-batch \
-              --account-name stresumechallenge022025 \
+              --account-name streschallenge022025v2 \
               --auth-mode login \
               -d '$web' \
               -s ./frontend \
