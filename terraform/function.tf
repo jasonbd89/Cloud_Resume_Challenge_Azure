@@ -15,22 +15,58 @@ resource "azurerm_linux_function_app" "visitor_counter" {
   storage_account_access_key = azurerm_storage_account.func_storage.primary_access_key
   service_plan_id            = azurerm_service_plan.func_plan.id
 
+  # 1. Enable Managed Identity so DefaultAzureCredential works
+  identity {
+    type = "SystemAssigned"
+  }
+
   site_config {
     application_stack {
-      python_version = "3.11"
+      python_version = "3.11" # Matches your GitHub Actions now
     }
     cors {
-      # Allow the static website to call this function. 
-      # trimsuffix removes the trailing slash which CORS often dislikes.
-      allowed_origins = [trimsuffix(azurerm_storage_account.resume-challenge.primary_web_endpoint, "/")]
+      allowed_origins     = [trimsuffix(azurerm_storage_account.resume-challenge.primary_web_endpoint, "/")]
       support_credentials = true
     }
   }
 
   app_settings = {
+    # 2. Add the variable your Python code specifically asks for
+    "COSMOS_ENDPOINT" = azurerm_cosmosdb_account.resume-challenge-ac.endpoint
+    "DATABASE_NAME"   = "resume-challenge-db"
+    "CONTAINER_NAME"  = "visitor-counter"
+
     "AzureResumeConnectionString" = azurerm_cosmosdb_account.resume-challenge-ac.primary_sql_connection_string
     "FUNCTIONS_WORKER_RUNTIME"    = "python"
-    "CosmosDbDatabaseName"        = azurerm_cosmosdb_sql_database.resume-challenge-db.name
-    "CosmosDbContainerName"       = azurerm_cosmosdb_sql_container.visitor-counter.name
+    
+    # 3. Essential for zip deployment to work correctly on Linux
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+    "ENABLE_ORYX_BUILD"              = "true"
   }
+}
+
+# 4. REQUIRED: Grant the Function App permission to read/write Cosmos DB
+# This assigns the "Cosmos DB Built-in Data Contributor" role
+resource "azurerm_cosmosdb_sql_role_definition" "role_def" {
+  resource_group_name = azurerm_resource_group.resume-challenge.name
+  account_name        = azurerm_cosmosdb_account.resume-challenge-ac.name
+  name                = "CosmosDBDataContributor"
+  type                = "BuiltInRole"
+  assignable_scopes   = [azurerm_cosmosdb_account.resume-challenge-ac.id]
+
+  permissions {
+    data_actions = [
+      "Microsoft.DocumentDB/databaseAccounts/readMetadata",
+      "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*",
+      "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*"
+    ]
+  }
+}
+
+resource "azurerm_cosmosdb_sql_role_assignment" "func_access" {
+  resource_group_name = azurerm_resource_group.resume-challenge.name
+  account_name        = azurerm_cosmosdb_account.resume-challenge-ac.name
+  role_definition_id  = azurerm_cosmosdb_sql_role_definition.role_def.id
+  principal_id        = azurerm_linux_function_app.visitor_counter.identity[0].principal_id
+  scope               = azurerm_cosmosdb_account.resume-challenge-ac.id
 }
