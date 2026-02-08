@@ -1,4 +1,4 @@
 resource "azurerm_resource_group" "resume-challenge" {
   name     = "rg-resume-challenge"
-  location = "polandcentral"
+  location = "North Europe"
 }
