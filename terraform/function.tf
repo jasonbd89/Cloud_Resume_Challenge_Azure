@@ -38,6 +38,7 @@ resource "azurerm_linux_function_app" "visitor_counter" {
 
     "AzureResumeConnectionString" = azurerm_cosmosdb_account.resume-challenge-ac.primary_sql_connection_string
     "FUNCTIONS_WORKER_RUNTIME"    = "python"
+    "AzureWebJobsFeatureFlags"    = "EnableWorkerIndexing"
     
     # 3. Essential for zip deployment to work correctly on Linux
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
