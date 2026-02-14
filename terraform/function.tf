@@ -31,6 +31,7 @@ resource "azurerm_linux_function_app" "visitor_counter" {
   }
 
   app_settings = {
+    
     # 2. Add the variable your Python code specifically asks for
     "COSMOS_ENDPOINT" = azurerm_cosmosdb_account.resume-challenge-ac.endpoint
     "DATABASE_NAME"   = "resume-challenge-db"
@@ -71,4 +72,11 @@ resource "azurerm_cosmosdb_sql_role_assignment" "func_access" {
   role_definition_id  = azurerm_cosmosdb_sql_role_definition.role_def.id
   principal_id        = azurerm_linux_function_app.visitor_counter.identity[0].principal_id
   scope               = azurerm_cosmosdb_account.resume-challenge-ac.id
+}
+
+resource "azurerm_application_insights" "func_app_insights" {
+  name                = "appi-resume-challenge"
+  location            = azurerm_resource_group.resume-challenge.location
+  resource_group_name = azurerm_resource_group.resume-challenge.name
+  application_type    = "web"
 }
