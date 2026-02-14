@@ -20,7 +20,7 @@ resource "azurerm_cosmosdb_account" "resume-challenge-ac" {
 
   tags = {
     environment = "Production"
-    project     = "ResumeChallenge"
+    project     = "ResumeChallenge" 
   }
   
 }
