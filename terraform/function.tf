@@ -41,8 +41,9 @@ resource "azurerm_linux_function_app" "visitor_counter" {
     "AzureWebJobsFeatureFlags"    = "EnableWorkerIndexing"
     
     # 3. Essential for zip deployment to work correctly on Linux
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
-    "ENABLE_ORYX_BUILD"              = "false"
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+    "ENABLE_ORYX_BUILD"              = "true"
+    "WEBSITE_RUN_FROM_PACKAGE"       = "1"
   }
 }
 
