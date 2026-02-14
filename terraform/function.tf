@@ -51,7 +51,7 @@ resource "azurerm_cosmosdb_sql_role_definition" "role_def" {
   resource_group_name = azurerm_resource_group.resume-challenge.name
   account_name        = azurerm_cosmosdb_account.resume-challenge-ac.name
   name                = "CosmosDBDataContributor"
-  type                = "BuiltInRole"
+  type                = "CustomRole"
   assignable_scopes   = [azurerm_cosmosdb_account.resume-challenge-ac.id]
 
   permissions {
