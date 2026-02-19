@@ -52,23 +52,28 @@ What did not work, what I broke and how I fixed it
 2. Initially I was having issues with quote limit upon Azure Function creation - there was simply 0 available for my subscriptions, after trying a bunch of different regions and still failing to create any  
     functions I had to ask the Azure support for increasing my quota for my account
 
-3. During the deployment of the Python Azure Function (v2 Model), I encountered a significant platform-level challenge that prevented the functions from being indexed/visible in the Azure Portal.
-The Issue
-After successful GitHub Action deployments, the Function App would report "No functions found," and the logs indicated a ModuleNotFoundError or a GLIBC version mismatch related to the cryptography and azure-identity libraries.
-The Cause
-Binary Incompatibility: The GitHub Runner (ubuntu-latest) was building Python wheels on a newer Linux kernel than the Azure Function Consumption host.
-The Cryptography Bug: A specific version conflict in the cryptography library (post-Nov 2024) caused the Python worker to crash during startup.
-Deployment Tensions: The default GitHub Action (functions-action) was forcing a "Run From Package" (Zip Deploy) state, which conflicted with the "Remote Build" (Oryx) required for Python v2 dependency resolution.
+<details>
+<summary><b>3. The Python V2 "Missing Functions" Bug (The Final Boss)</b></summary>
 
-The Resolution
-Library Pinning: Explicitly pinned cryptography==43.0.3 in requirements.txt to maintain OS compatibility.
+The Issue: After successful deployment, the Portal reported "No functions found," and logs showed a ModuleNotFoundError for cryptography.
 
-Remote Build Strategy: Switched from a local zip-build to an Azure Remote Build using SCM_DO_BUILD_DURING_DEPLOYMENT = true.
+The Cause: 
+1.  Binary Incompatibility: The GitHub Runner (ubuntu-latest) built libraries on a newer Linux kernel than the Azure host.
+2.  Platform Bug: A known conflict in the cryptography library (post-Nov 2024) crashed the Python worker.
+3.  Deployment Conflict: The standard functions-action forced a Zip-Deploy that bypassed the necessary build engine.
 
-Infrastructure-as-Code (Terraform) Alignment:
+The Resolution: * Library Pinning: Explicitly pinned cryptography==43.0.3 in requirements.txt.
 
-Set WEBSITE_RUN_FROM_PACKAGE = 0 to allow the Oryx engine to build files directly into wwwroot.
+Remote Build Strategy: Switched to Azure Remote Build (SCM_DO_BUILD_DURING_DEPLOYMENT = true).
 
-Implemented a lifecycle block in Terraform to prevent state-drift conflicts with GitHub Actions.
+Terraform Lock: Set WEBSITE_RUN_FROM_PACKAGE = 0 and used a lifecycle block to prevent GitHub from overriding the setting.
 
-Deployment Precision: Replaced the standard functions-action with an Azure CLI command (az functionapp deployment source config-zip) to ensure the zip file structure was correctly nested and that the remote build was explicitly triggered.
+CLI Deployment: Replaced the default action with Azure CLI (az functionapp deployment source config-zip) to force a clean remote build.
+
+</details>
+
+
+🚀 Future Enhancements
+Implementation of Azure CDN for global content delivery and custom domain mapping.
+
+Addition of Unit Tests for the Python backend.
