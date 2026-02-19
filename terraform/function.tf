@@ -38,6 +38,7 @@ resource "azurerm_linux_function_app" "visitor_counter" {
     "AzureWebJobsFeatureFlags"       = "EnableWorkerIndexing"
     # This setting tells Azure to run the build process during deployment, which is necessary for Python functions to install dependencies correctly. 
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+    "ENABLE_ORYX_BUILD"              = "true"
   }
 
   lifecycle {

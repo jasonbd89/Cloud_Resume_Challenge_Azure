@@ -23,13 +23,6 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: 'Install dependencies'
-      run: |
-        pushd './backend'
-        # This installs libraries into a folder Azure expects
-        pip install --target=".python_packages/lib/site-packages" -r requirements.txt
-        popd
-
     - name: 'Az CLI Login'
       uses: azure/login@v1
       with:
@@ -42,7 +35,5 @@ jobs:
       with:
         app-name: 'func-resume-challenge-022025'
         package: './backend'
-        # Turn these OFF now, because we are providing the built files ourselves
-        scm-do-build-during-deployment: false
-        enable-oryx-build: false
-        remote-build: false
+        scm-do-build-during-deployment: true
+        enable-oryx-build: true
