@@ -18,11 +18,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 1. Fixed: Changed Python version to 3.11 to match Terraform
     - name: Setup Python 3.11
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+
+    - name: 'Install dependencies'
+      run: |
+        pushd './backend'
+        # This installs libraries into a folder Azure expects
+        pip install --target=".python_packages/lib/site-packages" -r requirements.txt
+        popd
 
     - name: 'Az CLI Login'
       uses: azure/login@v1
@@ -31,11 +37,11 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    # 2. Fixed: Updated app-name to match Terraform resource name
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
       with:
-        app-name: 'func-resume-challenge-022025' 
+        app-name: 'func-resume-challenge-022025'
         package: './backend'
-        scm-do-build-during-deployment: true
-        enable-oryx-build: true
+        # Turn these OFF now, because we are providing the built files ourselves
+        scm-do-build-during-deployment: false
+        enable-oryx-build: false
