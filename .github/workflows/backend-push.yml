@@ -24,17 +24,22 @@ jobs:
         python-version: '3.11'
 
     - name: 'Az CLI Login'
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: 'Run Azure Functions Action'
-      uses: Azure/functions-action@v1
-      with:
-        app-name: 'func-resume-challenge-022025'
-        package: './backend'
-        scm-do-build-during-deployment: true
-        enable-oryx-build: true
-        remote-build: true
+    - name: 'Deploy via Azure CLI (Force Remote Build)'
+      run: |
+        # Zip the backend folder manually so we control exactly what goes in
+        zip -r deploy.zip ./backend
+        
+        # Use the CLI to deploy. 
+        # --build-remote true: Forces Azure to build on its side.
+        # This command will NOT force WEBSITE_RUN_FROM_PACKAGE=1 like the Action does.
+        az functionapp deployment source config-zip \
+          --name "func-resume-challenge-022025" \
+          --resource-group "resume-challenge-rg" \
+          --src deploy.zip \
+          --build-remote true
