@@ -31,19 +31,23 @@ resource "azurerm_linux_function_app" "visitor_counter" {
   }
 
   app_settings = {
+    "COSMOS_ENDPOINT"                = azurerm_cosmosdb_account.resume-challenge-ac.endpoint
+    "DATABASE_NAME"                  = "resume-challenge-db"
+    "CONTAINER_NAME"                 = "visitor-counter"
+    "FUNCTIONS_WORKER_RUNTIME"       = "python"
+    "AzureWebJobsFeatureFlags"       = "EnableWorkerIndexing"
     
-    # 2. Add the variable your Python code specifically asks for
-    "COSMOS_ENDPOINT" = azurerm_cosmosdb_account.resume-challenge-ac.endpoint
-    "DATABASE_NAME"   = "resume-challenge-db"
-    "CONTAINER_NAME"  = "visitor-counter"
-
-    "AzureResumeConnectionString" = azurerm_cosmosdb_account.resume-challenge-ac.primary_sql_connection_string
-    "FUNCTIONS_WORKER_RUNTIME"    = "python"
-    "AzureWebJobsFeatureFlags"    = "EnableWorkerIndexing"
-    
-    # 3. Essential for zip deployment to work correctly on Linux
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
-    "ENABLE_ORYX_BUILD"              = "true"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Tell Terraform to ignore these specific keys if GitHub adds/changes them
+      app_settings["WEBSITE_RUN_FROM_PACKAGE"],
+      app_settings["WEBSITE_ENABLE_SYNC_UPDATE_SITE"],
+      app_settings["WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"],
+      app_settings["WEBSITE_CONTENTSHARE"]
+    ]
   }
 }
 
