@@ -72,3 +72,5 @@ Set WEBSITE_RUN_FROM_PACKAGE = 0 to allow the Oryx engine to build files directl
 Implemented a lifecycle block in Terraform to prevent state-drift conflicts with GitHub Actions.
 
 Deployment Precision: Replaced the standard functions-action with an Azure CLI command (az functionapp deployment source config-zip) to ensure the zip file structure was correctly nested and that the remote build was explicitly triggered.
+
+This issue was the last piece of the puzzle, after that the project works as intended
