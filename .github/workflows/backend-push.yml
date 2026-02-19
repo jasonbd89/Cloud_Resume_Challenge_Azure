@@ -33,7 +33,9 @@ jobs:
     - name: 'Deploy via Azure CLI (Force Remote Build)'
       run: |
         # Zip the backend folder manually so we control exactly what goes in
-        zip -r deploy.zip ./backend
+        cd backend
+        zip -r ../deploy.zip .
+        cd ..
         
         # Use the CLI to deploy. 
         # --build-remote true: Forces Azure to build on its side.
