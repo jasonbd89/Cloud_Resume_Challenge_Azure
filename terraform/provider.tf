@@ -5,6 +5,7 @@ terraform {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 4.0" 
+      storage_use_azuread = true
     }
     azuread = {
       source  = "hashicorp/azuread"
