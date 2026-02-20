@@ -15,10 +15,10 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "state-file-tf"
-    storage_account_name = "statefileazlukas"  #The one you made in the GUI
+    storage_account_name = "statefileazlukas"
     container_name       = "tf-state"
     key                  = "prod.terraform.tf-state"
-    use_azuread_auth     = true  #Tells Terraform to use your login/identity
+    use_azuread_auth     = true 
   }
 }
 
