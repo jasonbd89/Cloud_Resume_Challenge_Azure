@@ -16,11 +16,24 @@
             --sidebar-bg: #0f172a;
             --white: #ffffff;
             --bg-body: #f1f5f9;
+            --border-color: #f1f5f9;
+        }
+
+        /* --- DARK MODE FARBY --- */
+        body.dark-mode {
+            --primary-color: #f8fafc;
+            --accent-color: #60a5fa;
+            --text-main: #cbd5e1;
+            --text-light: #94a3b8;
+            --sidebar-bg: #020617;
+            --white: #1e293b;
+            --bg-body: #0f172a;
+            --border-color: #334155;
         }
 
         * {
             box-sizing: border-box;
-            transition: all 0.2s ease;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
@@ -30,6 +43,36 @@
             background-color: var(--bg-body);
             margin: 0;
             padding: 40px 20px;
+        }
+
+        .floating-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .btn-ui {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            border: none;
+            background-color: var(--primary-color);
+            color: var(--white);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .btn-ui:hover {
+            transform: translateY(2px);
+            background-color: var(--accent-color);
         }
 
         .container {
@@ -51,7 +94,7 @@
         }
 
         .sidebar h2 {
-            color: var(--white);
+            color: #ffffff;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -80,7 +123,6 @@
             width: 16px;
         }
 
-        /* Skill Tags */
         .skills-container {
             display: flex;
             flex-wrap: wrap;
@@ -101,7 +143,6 @@
             transform: translateY(-2px);
         }
 
-        /* Visitor Counter Card */
         .visitor-counter {
             margin-top: 50px;
             padding: 20px;
@@ -122,10 +163,6 @@
         /* --- MAIN CONTENT --- */
         .main-content {
             padding: 50px 60px;
-        }
-
-        .header {
-            margin-bottom: 40px;
         }
 
         .header h1 {
@@ -152,15 +189,14 @@
             margin-top: 40px;
             margin-bottom: 25px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid var(--border-color);
         }
 
-        /* Experience & Education */
         .job, .education {
             position: relative;
             padding-left: 25px;
             margin-bottom: 35px;
-            border-left: 2px solid #e2e8f0;
+            border-left: 2px solid var(--border-color);
         }
 
         .job::before {
@@ -191,17 +227,9 @@
             gap: 15px;
         }
 
-        .job ul {
-            padding-left: 18px;
-            margin-top: 10px;
-        }
+        .job ul { padding-left: 18px; margin-top: 10px; }
+        .job li { margin-bottom: 8px; color: var(--text-main); }
 
-        .job li {
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-
-        /* Tech Details Grid */
         .tech-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -215,77 +243,46 @@
             margin-bottom: 4px;
         }
 
-        .tech-item span {
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
+        .tech-item span { font-size: 0.9rem; color: var(--text-light); }
 
-        /* Responsiveness */
         @media (max-width: 850px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                padding: 40px;
-            }
-            .main-content {
-                padding: 40px 30px;
-            }
-        }
-
-        @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; border: none; }
-            .visitor-counter { display: none; }
+            .container { grid-template-columns: 1fr; }
+            .sidebar { padding: 40px; }
+            .main-content { padding: 40px 30px; }
+            .floating-controls { top: 10px; right: 10px; }
         }
     </style>
 </head>
 <body>
 
+<div class="floating-controls">
+    <button class="btn-ui" onclick="toggleDarkMode()" title="Dark / Light Mode">
+        <i class="fa-solid fa-circle-half-stroke" id="theme-icon"></i>
+    </button>
+</div>
+
 <div class="container">
     <aside class="sidebar">
         <h2>Kontakt</h2>
         <div class="contact-info">
-            <div class="contact-item">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>Rožňavská 21, Bratislava</span>
-            </div>
-            <div class="contact-item">
-                <i class="fa-solid fa-phone"></i>
-                <span>+421 907 031 270</span>
-            </div>
-            <div class="contact-item">
-                <i class="fa-solid fa-envelope"></i>
-                <span>lkellner17@gmail.com</span>
-            </div>
-            <div class="contact-item">
-                <i class="fa-solid fa-cake-candles"></i>
-                <span>1. 1. 2002</span>
-            </div>
+            <div class="contact-item"><i class="fa-solid fa-location-dot"></i><span>Rožňavská 21, Bratislava</span></div>
+            <div class="contact-item"><i class="fa-solid fa-phone"></i><span>+421 907 031 270</span></div>
+            <div class="contact-item"><i class="fa-solid fa-envelope"></i><span>lkellner17@gmail.com</span></div>
+            <div class="contact-item"><i class="fa-solid fa-cake-candles"></i><span>1. 1. 2002</span></div>
         </div>
 
         <h2>Znalosti</h2>
         <div class="skills-container">
-            <span class="skill-tag">Azure</span>
-            <span class="skill-tag">Intune</span>
-            <span class="skill-tag">AWS</span>
-            <span class="skill-tag">CCNA</span>
-            <span class="skill-tag">Python</span>
-            <span class="skill-tag">Javascript</span>
-            <span class="skill-tag">LAN/WAN</span>
-            <span class="skill-tag">HTML/CSS</span>
-            <span class="skill-tag">Excel</span>
+            <span class="skill-tag">Azure</span><span class="skill-tag">Intune</span><span class="skill-tag">AWS</span>
+            <span class="skill-tag">CCNA</span><span class="skill-tag">Python</span><span class="skill-tag">Javascript</span>
+            <span class="skill-tag">LAN/WAN</span><span class="skill-tag">HTML/CSS</span><span class="skill-tag">Excel</span>
             <span class="skill-tag">Terraform</span>
         </div>
 
         <h2>Jazyky</h2>
         <div class="contact-info">
-            <div class="contact-item">
-                <span><strong>Anglický:</strong> B2</span>
-            </div>
-            <div class="contact-item">
-                <span><strong>Slovenský:</strong> C1</span>
-            </div>
+            <div class="contact-item"><span><strong>Anglický:</strong> B2</span></div>
+            <div class="contact-item"><span><strong>Slovenský:</strong> C1</span></div>
         </div>
 
         <div class="visitor-counter">
@@ -294,10 +291,7 @@
         </div>
 
         <h2>Iné</h2>
-        <div class="contact-item">
-            <i class="fa-solid fa-car"></i>
-            <span>Vodičský preukaz: B</span>
-        </div>
+        <div class="contact-item"><i class="fa-solid fa-car"></i><span>Vodičský preukaz: B</span></div>
     </aside>
 
     <main class="main-content">
@@ -308,7 +302,6 @@
 
         <section>
             <h2 class="section-title"><i class="fa-solid fa-briefcase"></i> Pracovné skúsenosti</h2>
-            
             <div class="job">
                 <div class="job-title">Technická a IT podpora pre logistické centrum</div>
                 <div class="date-location">
@@ -325,7 +318,6 @@
                     <li><strong>Asset Management:</strong> Zodpovednosť za obstarávanie, servis a správu životného cyklu hardvéru (PC, tlačiarne, kamerové systémy).</li>
                 </ul>
             </div>
-
             <div class="job">
                 <div class="job-title">Skladník</div>
                 <div class="date-location">
@@ -349,23 +341,10 @@
         <section>
             <h2 class="section-title"><i class="fa-solid fa-gears"></i> Technické detaily</h2>
             <div class="tech-grid">
-                <div class="tech-item">
-                    <strong>Cloud & Admin</strong>
-                    <span>Azure, Azure AD, Intune (Pokročilý)</span><br>
-                    <span>Terraform (Základy)</span>
-                </div>
-                <div class="tech-item">
-                    <strong>Networking</strong>
-                    <span>LAN/WAN, základy CCNA</span>
-                </div>
-                <div class="tech-item">
-                    <strong>Programovanie</strong>
-                    <span>Python, Javascript, HTML/CSS (Základy)</span>
-                </div>
-                <div class="tech-item">
-                    <strong>Office</strong>
-                    <span>MS Word & Excel (Pokročilý)</span>
-                </div>
+                <div class="tech-item"><strong>Cloud & Admin</strong><span>Azure, Azure AD, Intune (Pokročilý)</span><br><span>Terraform (Základy)</span></div>
+                <div class="tech-item"><strong>Networking</strong><span>LAN/WAN, základy CCNA</span></div>
+                <div class="tech-item"><strong>Programovanie</strong><span>Python, Javascript, HTML/CSS (Základy)</span></div>
+                <div class="tech-item"><strong>Office</strong><span>MS Word & Excel (Pokročilý)</span></div>
             </div>
         </section>
     </main>
@@ -385,6 +364,10 @@
             console.error('Chyba:', error);
             counterElement.innerText = '0';
         }
+    }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
     }
 
     window.onload = updateVisitorCounter;
