@@ -1,79 +1,91 @@
-☁️ Azure Cloud Resume Challenge
-This repository contains my implementation of the Cloud Resume Challenge (Azure Edition). This project demonstrates my ability to build, deploy, and automate a full-stack, serverless web application using Microsoft Azure and DevOps best practices.
+# ☁️ Azure Cloud Resume Challenge
 
-LIVE DEMO : https://streschallenge022025v2.z16.web.core.windows.net/
+![Azure](https://img.shields.io/badge/azure-%230072C6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
-🛠 Architecture
-The project is built entirely on a serverless architecture to ensure high availability and cost-efficiency (Pay-as-you-go).
+An end-to-end serverless web application demonstrating expertise in **Cloud Architecture**, **Infrastructure as Code (IaC)**, and **Modern DevOps** workflows.
 
-Current Stack :
-    Frontend: Built with HTML5, CSS3, and JavaScript.
+🔗 **[VIEW LIVE DEMO](https://streschallenge022025v2.z16.web.core.windows.net/)**
 
-    Hosting: Azure Storage (Static Website) – Used to host the static assets directly without managing servers.
+---
 
-    Backend API: Azure Functions (HTTP Trigger) – A serverless function that handles the logic for the visitor counter.
+## 🏛 Architecture & Stack
 
-    Database: Azure Cosmos DB (Serverless) – A NoSQL database used to store and increment the visitor count.
+The project is built entirely on a serverless architecture to ensure high availability and cost-efficiency (Pay-as-you-go). Having previously completed this challenge in AWS via the console, I refactored the entire approach for Azure using **Terraform** to implement a "DevOps-first" methodology.
 
-    CI/CD: GitHub Actions – Automatically deploys frontend and backend changes upon every push to the repository.
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Frontend** | HTML5, CSS3, JavaScript | Responsive UI hosted as a Static Website. |
+| **Hosting** | Azure Storage | High-performance static asset delivery via Blob Storage. |
+| **Compute** | Azure Functions (Python) | Serverless API (HTTP Trigger) handling visitor logic. |
+| **Database** | Azure Cosmos DB | Serverless NoSQL storage for visitor telemetry. |
+| **IaC** | Terraform | Automated provisioning with remote state management. |
+| **CI/CD** | GitHub Actions | Granular pipelines for Frontend, Backend, and Infra. |
 
-The project was handled as a IaC since I initially did the Cloud Resume challenge in AWS using a console, therefore I moved to Azure and decided to try out IaC - Terraform
-The terraform structure was divided into segments like storage, database, function, main & provider
+---
 
-For the state file location I used a remote backend and hosted it in a storage account directly in Azure
+## 🏗 Key Features & Implementation
 
-🏗 Key Features & Implementation
-1. Static Web Hosting
-The frontend is hosted in an Azure Storage Account enabled for "Static Website" hosting. Since I am using the native Azure-provided endpoint, the site is served over a secure HTTPS connection by default.
+### 1. Infrastructure as Code (IaC)
 
-2. Serverless API (Azure Functions)
-I developed a backend API using Python.
-The function acts as the bridge between the frontend and the database.
-It utilizes the Cosmos DB SDK to interact with the data layer securely.
+I moved away from manual configuration to a modular Terraform structure.
 
-    The Function has a custom role assgined named CosmosDBDataContributor which can only interact only with the database
-    This follows the Least Privilige principle
+* **State Management:** Used a remote backend hosted in an Azure Storage account to ensure state persistence and security.
+* **Modularity:** Divided the configuration into logical segments: `storage`, `database`, `functions`, and `provider`.
 
-3. Database Layer
-Azure Cosmos DB was chosen for its serverless capabilities. It stores a single JSON document that tracks the total number of visits. Each time the API is triggered, the count is incremented and returned to the frontend.
+### 2. Serverless API & Security
 
-4. Automation
-    For the automation I created 3 different Github Action workflows each handling updates / changes to a specific folder
-    The workflows are divided as below
-        Terraform push - this one triggers when a commit is made on main branch under /terraform/ folder
-        Backend push - this one triggers when a commit is made on main branch under /backend/ folder
-        Frontend push - this one triggers when a commit is made on main branch under /frontend/ folder
+* **Least Privilege:** The Azure Function uses a **System-Assigned Managed Identity** with a custom role (`CosmosDBDataContributor`), ensuring it only has the specific permissions required to interact with the database.
+* **OIDC Authentication:** Implemented passwordless authentication between GitHub and Azure using **OpenID Connect (OIDC)**, eliminating the need for hardcoded secrets.
 
-What did not work, what I broke and how I fixed it
+### 3. Granular CI/CD
 
-1. The first obstacle was realizing how to securely authenticate with Github Action identity since its not best practice to hardcode IDs into code, for this obstacle I leveraged a Github Action Secrets
-    This ensures no hardcoded IDs are present in the workflow code and its stored securely within Github
+Three independent GitHub Action workflows handle updates based on folder-specific commits:
 
-2. Initially I was having issues with quote limit upon Azure Function creation - there was simply 0 available for my subscriptions, after trying a bunch of different regions and still failing to create any  
-    functions I had to ask the Azure support for increasing my quota for my account
+* **Terraform Push:** Provisions infrastructure on changes to `/terraform/`.
+* **Backend Push:** Deploys the Python API on changes to `/backend/`.
+* **Frontend Push:** Syncs static assets on changes to `/frontend/`.
+
+---
+
+## 🛠 Lessons from the Trenches: Troubleshooting
 
 <details>
-<summary><b>3. The Python V2 "Missing Functions" Bug (The Final Boss)</b></summary>
+<summary><b>🔓 1. Secure Authentication & Secrets</b></summary>
+The first obstacle was securing the GitHub-to-Azure handshake. I moved away from static credentials by leveraging GitHub Action Secrets and Federated Identity (OIDC), ensuring no sensitive IDs are exposed in the repository code.
+</details>
 
-The Issue: After successful deployment, the Portal reported "No functions found," and logs showed a ModuleNotFoundError for cryptography.
+<details>
+<summary><b>📈 2. Regional Resource Quotas</b></summary>
+Encountered a `0` quota limit for Function App instances across several regions. I successfully advocated for a subscription quota increase through Azure Support, enabling the deployment to proceed in my target region.
+</details>
 
-The Cause: 
-1.  Binary Incompatibility: The GitHub Runner (ubuntu-latest) built libraries on a newer Linux kernel than the Azure host.
-2.  Platform Bug: A known conflict in the cryptography library (post-Nov 2024) crashed the Python worker.
-3.  Deployment Conflict: The standard functions-action forced a Zip-Deploy that bypassed the necessary build engine.
+<details>
+<summary><b>🐛 3. The Python V2 "Missing Functions" Bug (The Final Boss)</b></summary>
 
-The Resolution: * Library Pinning: Explicitly pinned cryptography==43.0.3 in requirements.txt.
+**The Issue:** Functions were reported as "successful" in deployment but remained invisible in the Azure Portal.
 
-Remote Build Strategy: Switched to Azure Remote Build (SCM_DO_BUILD_DURING_DEPLOYMENT = true).
+**The Root Cause:**
 
-Terraform Lock: Set WEBSITE_RUN_FROM_PACKAGE = 0 and used a lifecycle block to prevent GitHub from overriding the setting.
+* **Binary Incompatibility:** The GitHub Runner (`ubuntu-latest`) built libraries on a newer Linux kernel than the Azure host, leading to `GLIBC` mismatches.
+* **Cryptography Bug:** A specific version conflict in the `cryptography` library crashed the Python worker.
+* **Deployment Conflict:** The standard `functions-action` forced a `Zip-Deploy` that bypassed the necessary build engine.
 
-CLI Deployment: Replaced the default action with Azure CLI (az functionapp deployment source config-zip) to force a clean remote build.
+**The Resolution:**
+
+1. **Library Pinning:** Explicitly pinned `cryptography==43.0.3` in `requirements.txt`.
+2. **Remote Build Strategy:** Switched to **Azure Remote Build** (`SCM_DO_BUILD_DURING_DEPLOYMENT = true`).
+3. **Terraform Lifecycle:** Implemented a `lifecycle` block in Terraform to prevent state-drift conflicts with GitHub Actions.
+4. **CLI Precision:** Replaced the standard action with **Azure CLI** (`az functionapp deployment source config-zip`) to ensure the zip structure was correctly nested and the build was explicitly triggered.
 
 </details>
 
+---
 
-🚀 Future Enhancements
-Implementation of Azure CDN for global content delivery and custom domain mapping.
+## 🚀 Future Enhancements
 
-Addition of Unit Tests for the Python backend.
+* [ ] **Edge Delivery:** Integrate Azure CDN with Custom Domain & Managed SSL.
+* [ ] **Testing:** Implement PyTest for backend logic validation.
+* [ ] **Monitoring:** Configure Application Insights for real-time telemetry.
