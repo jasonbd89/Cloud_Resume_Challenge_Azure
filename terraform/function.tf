@@ -10,10 +10,9 @@ resource "azurerm_linux_function_app" "visitor_counter" {
   name                = "func-resume-challenge-022025"
   resource_group_name = azurerm_resource_group.resume-challenge.name
   location            = azurerm_resource_group.resume-challenge.location
-
   storage_account_name       = azurerm_storage_account.func_storage.name
-  storage_account_access_key = azurerm_storage_account.func_storage.primary_access_key
   service_plan_id            = azurerm_service_plan.func_plan.id
+  storage_uses_managed_identity = true
 
   # 1. Enable Managed Identity so DefaultAzureCredential works
   identity {
@@ -84,4 +83,10 @@ resource "azurerm_application_insights" "func_app_insights" {
   location            = azurerm_resource_group.resume-challenge.location
   resource_group_name = azurerm_resource_group.resume-challenge.name
   application_type    = "web"
+}
+
+resource "azurerm_role_assignment" "func_storage_data" {
+  scope                = azurerm_storage_account.func_storage.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_linux_function_app.visitor_counter.identity[0].principal_id
 }
