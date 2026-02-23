@@ -40,6 +40,7 @@ resource "azurerm_linux_function_app" "visitor_counter" {
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
     "ENABLE_ORYX_BUILD"              = "true"
     "WEBSITE_RUN_FROM_PACKAGE"       = "0"
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.func_app_insights.connection_string
   }
 
   lifecycle {
@@ -80,7 +81,7 @@ resource "azurerm_cosmosdb_sql_role_assignment" "func_access" {
 }
 
 resource "azurerm_application_insights" "func_app_insights" {
-  name                = "appi-resume-challenge"
+  name                = "func-reschallenge-ai"
   location            = azurerm_resource_group.resume-challenge.location
   resource_group_name = azurerm_resource_group.resume-challenge.name
   application_type    = "web"
