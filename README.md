@@ -36,6 +36,8 @@ I moved away from manual configuration to a modular Terraform structure.
 * **State Management:** Used a remote backend hosted in an Azure Storage account to ensure state persistence and security.
 * **Modularity:** Divided the configuration into logical segments: `storage`, `database`, `functions`, and `provider`.
 
+---
+
 ### 2. Serverless API & Security
 
 * **Least Privilege:** The Azure Function uses a **System-Assigned Managed Identity** with a custom role (`CosmosDBDataContributor`), ensuring it only has the specific permissions required to interact with the database.
