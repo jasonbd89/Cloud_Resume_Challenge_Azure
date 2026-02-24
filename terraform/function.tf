@@ -86,3 +86,39 @@ resource "azurerm_application_insights" "func_app_insights" {
   resource_group_name = azurerm_resource_group.resume-challenge.name
   application_type    = "web"
 }
+
+resource "azurerm_monitor_action_group" "func_action_group" {
+  name                = "func-reschallenge-ag"
+  resource_group_name = azurerm_resource_group.resume-challenge.name
+  short_name          = "FuncAG"
+
+  email_receiver {
+    name          = "email_receiver"
+    email_address = var.alert_email
+  }
+  
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert_v2" "func_query_rule" {
+  name = "func-res-challenge-query-rule"
+  scopes = [azurerm_application_insights.func_app_insights.id]
+  resource_group_name = azurerm_resource_group.resume-challenge.name
+  location = azurerm_resource_group.resume-challenge.location
+  description = "Alert rule for visitor counter function errors"
+  enabled = true
+  severity = 3
+  evaluation_frequency = "PT5M"
+  window_duration = "PT5M"
+  criteria {
+    operator                = "GreaterThan"
+    threshold               = 0
+    time_aggregation_method = "Count"
+    query                   = <<-QUERY
+      requests
+      | where resultCode startswith "5"
+      QUERY
+  }
+  action {
+    action_groups = [azurerm_monitor_action_group.func_action_group.id]
+  }
+}
