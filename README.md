@@ -23,6 +23,7 @@ The project is built entirely on a serverless architecture to ensure high availa
 | **Database** | Azure Cosmos DB | Serverless NoSQL storage for visitor telemetry. |
 | **IaC** | Terraform | Automated provisioning with remote state management. |
 | **CI/CD** | GitHub Actions | Granular pipelines for Frontend, Backend, and Infra. |
+| **Monitoring** | Azure Monitor | Set up monitoring with live alerts to let me know when function returns 5xx errors. |
 
 ---
 
@@ -39,6 +40,9 @@ I moved away from manual configuration to a modular Terraform structure.
 
 * **Least Privilege:** The Azure Function uses a **System-Assigned Managed Identity** with a custom role (`CosmosDBDataContributor`), ensuring it only has the specific permissions required to interact with the database.
 * **OIDC Authentication:** Implemented passwordless authentication between GitHub and Azure using **OpenID Connect (OIDC)**, eliminating the need for hardcoded secrets.
+* **COSMOSDB Network Security:** The CosmosDB account is secured via Managed Identity. I wanted to go further and block public access and create IP filter so only Azure Functions outbound IPs would be allowed, but this approach creates a cirlucar dependency - CosmosDB would need to reference the Function App's IPs before the Function App exists.<br>In production env this would be solved via Vnet Private Endpoint.
+
+---
 
 ### 3. Granular CI/CD
 
@@ -88,4 +92,4 @@ Encountered a `0` quota limit for Function App instances across several regions.
 
 * [ ] **Edge Delivery:** Integrate Azure CDN with Custom Domain & Managed SSL.
 * [ ] **Testing:** Implement PyTest for backend logic validation.
-* [ ] **Monitoring:** Configure Application Insights for real-time telemetry.
+* [x] **Monitoring:** Configure Application Insights for real-time telemetry.
