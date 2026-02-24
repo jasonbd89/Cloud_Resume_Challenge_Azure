@@ -4,7 +4,7 @@ resource "azurerm_cosmosdb_account" "resume-challenge-ac" {
   resource_group_name = azurerm_resource_group.resume-challenge.name
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 
   consistency_policy {
     consistency_level = "Session"
