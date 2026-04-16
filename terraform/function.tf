@@ -107,8 +107,8 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "func_query_rule" {
   description = "Alert rule for visitor counter function errors"
   enabled = true
   severity = 3
-  evaluation_frequency = "PT5M"
-  window_duration = "PT5M"
+  evaluation_frequency = "PT1D"
+  window_duration = "PT1D"
   criteria {
     operator                = "GreaterThan"
     threshold               = 0
